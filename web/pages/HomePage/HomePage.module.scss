@@ -1,0 +1,150 @@
+@use "../../styles/tokens" as t;
+
+/*
+ * 首页：一块点阵底 + 一排资源卡。
+ *
+ * 点阵的明暗**不是逐点随机**：点本身是均匀重复的圆点，
+ * 明暗由几层很大的软光斑叠成一张「云」去压（mask）——
+ * 所以亮暗是一小片一小片、平缓过渡的，不会这点亮下一个点就暗。
+ * 光斑的尺寸和位置全部写死、不掺随机数，每次进来分布都一样。
+ */
+
+$dot-pitch: 26px; // 点距：比纸面默认的密点更散
+$dot-radius: 1px; // 点半径（直径 2px）
+$dot-ink: rgba(19, 19, 19, 0.3);
+
+$cards-width: 900px;
+$cards-gap: 16px;
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 40px;
+  background-color: t.$paper;
+  color: t.$ink-1;
+
+  /*
+   * 点阵铺在写死的视口层上：不进文档流、不吃点击。
+   * mask 只改点的透明度，点的大小与位置都不动。
+   */
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    background-image: radial-gradient(
+      $dot-ink $dot-radius,
+      transparent $dot-radius
+    );
+    background-size: $dot-pitch $dot-pitch;
+
+    /*
+     * 云分四层：先一层 35% 的底（所有点都压到这一档），
+     * 再叠三团不同大小的软光斑往上加亮；三层的格子尺寸互不相同
+     * （620 / 860 / 1090），叠起来看不出重复的块。
+     * 亮处约 30% 的点墨、暗处约 10%，跨三倍，成片的深浅才看得出来。
+     */
+    $cloud:
+      linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+      radial-gradient(
+        ellipse 60% 52% at 34% 40%,
+        rgba(0, 0, 0, 0.65),
+        transparent 72%
+      ),
+      radial-gradient(
+        ellipse 52% 46% at 74% 68%,
+        rgba(0, 0, 0, 0.6),
+        transparent 70%
+      ),
+      radial-gradient(
+        ellipse 46% 56% at 16% 80%,
+        rgba(0, 0, 0, 0.55),
+        transparent 68%
+      );
+
+    -webkit-mask-image: $cloud;
+    mask-image: $cloud;
+    -webkit-mask-size: 100% 100%, 620px 620px, 860px 860px, 1090px 1090px;
+    mask-size: 100% 100%, 620px 620px, 860px 860px, 1090px 1090px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+  }
+}
+
+/* 四张卡横排；宽度固定，PC 上就是正中一条 */
+.cards {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $cards-gap;
+  width: $cards-width;
+}
+
+/*
+ * 卡片：左边两行字（类别 + 标题），右边一枚箭头，顶对齐。
+ * 高度跟着内容走，不留多余的空白。
+ */
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 20px;
+  border: 1px solid t.$line;
+  border-radius: 12px;
+  background-color: t.$surface;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform 200ms,
+    border-color 200ms,
+    box-shadow 200ms;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: t.$line-strong;
+    box-shadow: 0 8px 24px rgba(19, 19, 19, 0.07);
+
+    .arrow {
+      color: t.$ink-1;
+      transform: translate(1px, -1px);
+    }
+  }
+}
+
+.text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  color: t.$ink-4;
+  font-size: 11.5px;
+  line-height: 16px;
+  letter-spacing: 0.14em;
+}
+
+.title {
+  color: t.$ink-1;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 27px;
+  letter-spacing: 0.01em;
+}
+
+.arrow {
+  flex: none;
+  color: t.$ink-5;
+  transition:
+    color 200ms,
+    transform 200ms;
+}

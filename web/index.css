@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
-/* Tailwind v4：设计 token 直接写在 CSS 里，不需要 tailwind.config.js */
+/*
+ * Tailwind v4：只用来做 reset 与 base。
+ * 页面自己的样式与灰阶 token 走 Sass（web/styles/_tokens.scss 及各自的 .module.scss），
+ * 不在这里写页面级的东西。
+ */
 @theme {
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans SC",
