@@ -8,6 +8,7 @@
 - React 18 + TypeScript（源码根目录为 `web/`，入口 `web/index.tsx`）
 - Tailwind CSS v4（`@tailwindcss/vite` 插件；无 `tailwind.config.js`）：`web/index.css` 只留 `@import "tailwindcss"` 与 base
 - Sass（`sass`，Vite 内置编译）：页面样式写 `*.module.scss`，灰阶 token 在 `web/styles/_tokens.scss`
+- 字体：全站默认 Nozu Sans for Nortu，自托管在 `web/assets/fonts/nozu-sans-nortu.woff2`，`@font-face` 与 `--font-sans` 写在 `web/index.css`
 - 图标：`@remixicon/react`
 - 单页面应用：无路由，`web/pages/HomePage/` 直接由 `web/index.tsx` 渲染
 
