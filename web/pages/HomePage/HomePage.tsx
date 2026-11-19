@@ -5,8 +5,12 @@ import {
   RiShareLine,
 } from "@remixicon/react";
 import ContactDialog from "../../components/ContactDialog/ContactDialog.tsx";
+import LinkDialog, {
+  type LinkDialogContent,
+} from "../../components/LinkDialog/LinkDialog.tsx";
 import styles from "./HomePage.module.scss";
 import vocabularyUrl from "../../assets/downloads/nortu-vocabulary.jsonl?url";
+import textbookPdfUrl from "../../assets/downloads/自由语教材261120a.pdf?url";
 import nozuSansUrl from "../../assets/fonts/nozu-sans-nortu.woff2?url";
 
 interface ResourceLink {
@@ -16,13 +20,73 @@ interface ResourceLink {
   title: string;
   /** 卡片第三行：作者，渲染为「by xxx」 */
   author: string;
-  href: string;
+  /** 直接跳转（或下载）的地址；合并卡没有这一项 */
+  href?: string;
   /**
    * 有值表示这是本地文件下载：`href` 是打包后的资源地址，
    * `download` 是存盘时用的文件名，卡片改用下载图标、不在新标签页打开。
    */
   download?: string;
+  /**
+   * 有值表示这是合并卡：卡片本身不跳转，点开弹窗，
+   * 弹窗里是这一类资源各自的跳转条 / 下载条。
+   */
+  dialog?: LinkDialogContent;
 }
+
+/** 「自由语词汇表」合并卡：在线词汇表 + JSONL 数据文件 */
+const vocabularyDialog: LinkDialogContent = {
+  title: "自由语词汇表",
+  note: "在线查看，或下载 JSONL 数据文件",
+  items: [
+    {
+      title: "在线词汇表",
+      href: "https://workbuddy.link/p/Ujsotr3QgY8wHUXIXHXgvN?source=2",
+    },
+    {
+      title: "JSONL数据文件",
+      href: vocabularyUrl,
+      download: "Nortu Vocabulary.jsonl",
+    },
+  ],
+};
+
+/** 「自由语语法」合并卡：三篇语法文档 */
+const grammarDialog: LinkDialogContent = {
+  title: "自由语语法",
+  note: "以下三篇文档，点任意一条在新标签页打开",
+  items: [
+    {
+      title: "语块",
+      href: "https://workbuddy.link/p/AZsFvGlJSBD0xUBIci1tku?source=2",
+    },
+    {
+      title: "“动词时态”",
+      href: "https://workbuddy.link/p/Nvrs3hfpDlKN87QraceNQk?source=2",
+    },
+    {
+      title: "uv",
+      href: "https://workbuddy.link/p/Ia9RUMvqSUTAWC7kgjhXYZ?source=2",
+    },
+  ],
+};
+
+/** 「自由语教材」合并卡：在线教材 + PDF 文件 */
+const textbookDialog: LinkDialogContent = {
+  title: "自由语教材",
+  note: "在线查看，或下载 PDF 教材",
+  items: [
+    {
+      title: "在线教材",
+      href: "https://nortu-textbook.app.workbuddy.host/?sharecode=5VGLARADJX&shareId=a385d2fd27f5434abb1e93906a597bfc",
+    },
+    {
+      title: "PDF文件",
+      href: textbookPdfUrl,
+      download: "自由语教材261120a.pdf",
+    },
+  ],
+};
 
 interface ResourceSection {
   /** 大类标题里的 Nortu 语词，字号比中文大一档 */
@@ -38,38 +102,22 @@ const sections: ResourceSection[] = [
     title: "基建",
     links: [
       {
-        label: "自由语",
-        title: "在线词汇表",
-        author: "nosto",
-        href: "https://workbuddy.link/p/Ujsotr3QgY8wHUXIXHXgvN?source=2",
-      },
-      {
-        label: "自由语语法",
-        title: "语块",
-        author: "nosto",
-        href: "https://workbuddy.link/p/AZsFvGlJSBD0xUBIci1tku?source=2",
-      },
-      {
-        label: "自由语语法",
-        title: "“动词时态”",
-        author: "nosto",
-        href: "https://workbuddy.link/p/Nvrs3hfpDlKN87QraceNQk?source=2",
-      },
-      {
-        label: "自由语语法",
-        title: "uv",
-        author: "nosto",
-        href: "https://workbuddy.link/p/Ia9RUMvqSUTAWC7kgjhXYZ?source=2",
-      },
-      {
-        label: "JSONL数据文件",
         title: "自由语词汇表",
         author: "nosto",
-        href: vocabularyUrl,
-        download: "Nortu Vocabulary.jsonl",
+        dialog: vocabularyDialog,
       },
       {
-        label: "WOFF2字体",
+        title: "自由语语法",
+        author: "nosto",
+        dialog: grammarDialog,
+      },
+      {
+        title: "自由语教材",
+        author: "酱的不卷",
+        dialog: textbookDialog,
+      },
+      {
+        label: "WOFF2自由语字体",
         title: "Nozu硬黑体",
         author: "nosto",
         href: nozuSansUrl,
@@ -105,6 +153,11 @@ const sections: ResourceSection[] = [
 const HomePage = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const closeContact = useCallback(() => setContactOpen(false), []);
+  /** 当前打开的合并卡弹窗，null 表示都没开 */
+  const [dialogContent, setDialogContent] = useState<LinkDialogContent | null>(
+    null
+  );
+  const closeDialog = useCallback(() => setDialogContent(null), []);
 
   return (
     <div className={styles.page}>
@@ -131,16 +184,8 @@ const HomePage = () => {
           <div className={styles.cards}>
             {section.links.map((item) => {
               const isDownload = Boolean(item.download);
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
-                  download={item.download}
-                  target={isDownload ? undefined : "_blank"}
-                  rel={isDownload ? undefined : "noreferrer"}
-                  className={styles.card}
-                >
+              const cardBody = (
+                <>
                   <span className={styles.text}>
                     {item.label && (
                       <span className={styles.label}>{item.label}</span>
@@ -153,6 +198,36 @@ const HomePage = () => {
                   ) : (
                     <RiArrowRightLine size={24} className={styles.arrow} />
                   )}
+                </>
+              );
+
+              /* 合并卡：本身不跳转，点开弹窗后逐条跳转 / 下载 */
+              const cardDialog = item.dialog;
+              if (cardDialog) {
+                return (
+                  <button
+                    key={item.title}
+                    type="button"
+                    className={`${styles.card} ${styles.cardButton}`}
+                    onClick={() => setDialogContent(cardDialog)}
+                    aria-haspopup="dialog"
+                  >
+                    {cardBody}
+                  </button>
+                );
+              }
+
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
+                  download={item.download}
+                  target={isDownload ? undefined : "_blank"}
+                  rel={isDownload ? undefined : "noreferrer"}
+                  className={styles.card}
+                >
+                  {cardBody}
                 </a>
               );
             })}
@@ -160,6 +235,7 @@ const HomePage = () => {
         </section>
       ))}
       <ContactDialog open={contactOpen} onClose={closeContact} />
+      <LinkDialog content={dialogContent} onClose={closeDialog} />
     </div>
   );
 };

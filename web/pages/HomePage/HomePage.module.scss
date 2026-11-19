@@ -221,6 +221,17 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
   }
 }
 
+/*
+ * 合并卡是按钮而非链接：沿用卡片外观，
+ * 只补上按钮默认不会带来的排版（字体、文本对齐、手型光标）。
+ */
+.cardButton {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .text {
   display: flex;
   min-width: 0;
