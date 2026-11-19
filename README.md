@@ -19,11 +19,20 @@
 pnpm install
 pnpm dev      # dev 实例：http://localhost:220，热更新
 pnpm build    # 类型检查 + 构建到 dist/
-pnpm preview  # 预览构建产物：http://localhost:222
+pnpm preview  # 预览构建产物：http://localhost:222/nortu/
 ```
 
 两个端口都开了 `strictPort`，端口被占会直接报错而不是自动 +1。
 
 ## 发布
 
-与 `site-home` 一致：本仓库只放源码，**不配 GitHub Actions、不写 workflow**，发布由本地手动构建后把 `dist/` 内容搬到目标 Pages 仓库（具体目标仓库待定）。
+与 `site-home` 一致：本仓库只放源码，**不配 GitHub Actions、不写 workflow**，发布由本地手动构建后把 `dist/` 内容搬到目标 Pages 仓库。
+
+- 目标仓库：`nortu`（GitHub Pages 项目页，线上地址 `https://oustr.github.io/nortu/`）
+- 因为挂在 `/nortu/` 子路径下，`vite.config.ts` 里 `build` 时 `base` 固定为 `/nortu/`，dev/preview 仍是根路径
+- 发布步骤：
+
+```bash
+pnpm build
+# 把 dist/ 里的内容（含 index.html、assets/）连同 .nojekyll 覆盖到 ../nortu
+```
