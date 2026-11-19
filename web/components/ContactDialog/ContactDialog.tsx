@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { RiCheckLine, RiCloseLine, RiFileCopyLine } from "@remixicon/react";
 import styles from "./ContactDialog.module.scss";
+import qqGroupQrUrl from "../../assets/images/qq-group-free-language.svg?url";
 
 /** 一张联系方式卡：平台名 + 浅灰副标题 + 一条主内容（点卡片复制这条） */
 interface ContactCard {
@@ -10,17 +11,41 @@ interface ContactCard {
   value: string;
 }
 
+/** 合并块里的一行：平台名 + 用户名 + 账号（点这一行只复制账号） */
+interface ContactRowItem {
+  label: string;
+  name: string;
+  value: string;
+}
+
+/** 合并块：同一个人的各平台联络方式归在一起，逐行复制 */
+interface ContactBlock {
+  heading: string;
+  rows: ContactRowItem[];
+}
+
 const authorCards: ContactCard[] = [
   { label: "QQ群", desc: "自由语讨论群", value: "1048896534" },
-  { label: "X", desc: "nosto", value: "nosto__" },
-  { label: "B站", desc: "nosto_", value: "3546889005828619" },
-  { label: "小红书", desc: "nosto", value: "nosto_" },
 ];
+
+const authorBlock: ContactBlock = {
+  heading: "nosto",
+  rows: [
+    { label: "X", name: "nosto", value: "nosto__" },
+    { label: "B站", name: "nosto_", value: "3546889005828619" },
+    { label: "小红书", name: "nosto", value: "nosto_" },
+  ],
+};
 
 const communityCard: ContactCard = {
   label: "QQ群",
   desc: "社区自由语设计/讨论群 Ainz-soro ote Anoz'i Noruts",
   value: "1134401051",
+};
+
+const contributorBlock: ContactBlock = {
+  heading: "酱的不卷",
+  rows: [{ label: "B站", name: "酱的不卷", value: "3707006902864287" }],
 };
 
 const COPIED_HOLD_MS = 1400;
@@ -69,15 +94,15 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
 
   if (!open) return null;
 
-  const handleCopy = async (card: ContactCard) => {
+  const handleCopy = async (value: string, key: string) => {
     try {
-      await navigator.clipboard.writeText(card.value);
+      await navigator.clipboard.writeText(value);
     } catch {
       /* 剪贴板不可用（非安全上下文等）：什么都不做，别报错打断 */
       return;
     }
 
-    setCopiedKey(`${card.label}-${card.value}`);
+    setCopiedKey(key);
     window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(
       () => setCopiedKey(null),
@@ -94,7 +119,7 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
         key={key}
         type="button"
         className={styles.card}
-        onClick={() => handleCopy(card)}
+        onClick={() => handleCopy(card.value, key)}
         aria-label={`复制 ${card.label}：${card.value}`}
       >
         <span className={styles.cardText}>
@@ -111,6 +136,40 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
     );
   };
 
+  /* 合并块：一个名字带若干行平台号，点哪行复制哪行 */
+  const renderBlock = (block: ContactBlock) => (
+    <div key={block.heading} className={styles.block}>
+      <span className={styles.blockHeading}>{block.heading}</span>
+      <div className={styles.rows}>
+        {block.rows.map((row) => {
+          const key = `${block.heading}-${row.label}-${row.value}`;
+          const copied = copiedKey === key;
+
+          return (
+            <button
+              key={row.label}
+              type="button"
+              className={styles.row}
+              onClick={() => handleCopy(row.value, key)}
+              aria-label={`复制 ${block.heading} 的 ${row.label}：${row.name} ${row.value}`}
+            >
+              <span className={styles.rowText}>
+                <span className={styles.rowLabel}>{row.label}</span>
+                <span className={styles.rowName}>{row.name}</span>
+                <span className={styles.rowValue}>{row.value}</span>
+              </span>
+              {copied ? (
+                <RiCheckLine size={14} className={styles.rowIconActive} />
+              ) : (
+                <RiFileCopyLine size={14} className={styles.rowIcon} />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return createPortal(
     <div
       className={styles.overlay}
@@ -126,12 +185,9 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
         aria-labelledby="contact-dialog-title"
       >
         <header className={styles.header}>
-          <div className={styles.headerText}>
-            <h2 id="contact-dialog-title" className={styles.title}>
-              联系方式
-            </h2>
-            <p className={styles.subtitle}>自由语作者 nosto</p>
-          </div>
+          <h2 id="contact-dialog-title" className={styles.title}>
+            联系方式
+          </h2>
           <button
             type="button"
             className={styles.close}
@@ -142,16 +198,37 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
           </button>
         </header>
 
-        <div className={styles.grid}>{authorCards.map(renderCard)}</div>
+        <h3 className={styles.sectionTitle}>自由语及作者</h3>
+        <div className={styles.grid}>
+          {/* 自由语 QQ 群：群号卡旁边挂一张扫码入群的二维码 */}
+          <div className={styles.group}>
+            {authorCards.map(renderCard)}
+            <figure className={styles.qr}>
+              <img
+                className={styles.qrImage}
+                src={qqGroupQrUrl}
+                alt="自由语QQ群 1048896534 二维码"
+                width={84}
+                height={84}
+                loading="lazy"
+              />
+              <figcaption className={styles.qrCaption}>扫码进群噢</figcaption>
+            </figure>
+          </div>
+          {renderBlock(authorBlock)}
+        </div>
 
         <hr className={styles.divider} />
 
-        <div className={styles.community}>
-          <p className={styles.note}>
-            以下为社区自由语，即为社区对标准自由语进行改造后的衍生语言，和标准自由语有较大区别
-          </p>
-          {renderCard(communityCard)}
-        </div>
+        <h3 className={styles.sectionTitle}>自由语贡献者</h3>
+        <div className={styles.grid}>{renderBlock(contributorBlock)}</div>
+
+        <hr className={styles.divider} />
+
+        <p className={styles.note}>
+          以下为社区自由语，即为社区对标准自由语进行改造后的衍生语言，和标准自由语有较大区别
+        </p>
+        <div className={styles.grid}>{renderCard(communityCard)}</div>
       </div>
     </div>,
     document.body
