@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Tailwind v4：设计 token 直接写在 CSS 里，不需要 tailwind.config.js */
+@theme {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans SC",
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-white text-black antialiased;
+  }
+
+  /* 选中文字：深灰底 + 浅色字，和整体白底黑字区分开 */
+  ::selection {
+    @apply bg-neutral-700 text-neutral-50;
+  }
+}
