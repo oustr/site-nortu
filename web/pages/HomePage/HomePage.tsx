@@ -1,5 +1,7 @@
-import { RiArrowRightLine } from "@remixicon/react";
+import { RiArrowRightLine, RiDownloadLine } from "@remixicon/react";
 import styles from "./HomePage.module.scss";
+import vocabularyUrl from "../../assets/downloads/nortu-vocabulary.jsonl?url";
+import nozuSansUrl from "../../assets/fonts/nozu-sans-nortu.woff2?url";
 
 interface ResourceLink {
   /** 卡片第一行：资源类别，缺省时这一行不渲染 */
@@ -9,6 +11,11 @@ interface ResourceLink {
   /** 卡片第三行：作者，渲染为「by xxx」 */
   author: string;
   href: string;
+  /**
+   * 有值表示这是本地文件下载：`href` 是打包后的资源地址，
+   * `download` 是存盘时用的文件名，卡片改用下载图标、不在新标签页打开。
+   */
+  download?: string;
 }
 
 interface ResourceSection {
@@ -47,6 +54,20 @@ const sections: ResourceSection[] = [
         title: "uv",
         author: "nosto",
         href: "https://workbuddy.link/p/Ia9RUMvqSUTAWC7kgjhXYZ?source=2",
+      },
+      {
+        label: "JSONL数据文件",
+        title: "自由语词汇表",
+        author: "nosto",
+        href: vocabularyUrl,
+        download: "Nortu Vocabulary.jsonl",
+      },
+      {
+        label: "WOFF2字体",
+        title: "Nozu硬黑体",
+        author: "nosto",
+        href: nozuSansUrl,
+        download: "Nozu Sans for Nortu.woff2",
       },
     ],
   },
@@ -88,22 +109,33 @@ const HomePage = () => (
           <span>{section.title}</span>
         </h2>
         <div className={styles.cards}>
-          {section.links.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.card}
-            >
-              <span className={styles.text}>
-                {item.label && <span className={styles.label}>{item.label}</span>}
-                <span className={styles.title}>{item.title}</span>
-                <span className={styles.author}>by {item.author}</span>
-              </span>
-              <RiArrowRightLine size={24} className={styles.arrow} />
-            </a>
-          ))}
+          {section.links.map((item) => {
+            const isDownload = Boolean(item.download);
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
+                download={item.download}
+                target={isDownload ? undefined : "_blank"}
+                rel={isDownload ? undefined : "noreferrer"}
+                className={styles.card}
+              >
+                <span className={styles.text}>
+                  {item.label && (
+                    <span className={styles.label}>{item.label}</span>
+                  )}
+                  <span className={styles.title}>{item.title}</span>
+                  <span className={styles.author}>by {item.author}</span>
+                </span>
+                {isDownload ? (
+                  <RiDownloadLine size={24} className={styles.arrow} />
+                ) : (
+                  <RiArrowRightLine size={24} className={styles.arrow} />
+                )}
+              </a>
+            );
+          })}
         </div>
       </section>
     ))}
