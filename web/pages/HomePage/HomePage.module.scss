@@ -1,7 +1,8 @@
+@use "sass:math";
 @use "../../styles/tokens" as t;
 
 /*
- * 首页：一块点阵底 + 一排资源卡。
+ * 首页：一块点阵底 + 页标题 + 若干「大类 → 一排资源卡」。
  *
  * 点阵的明暗**不是逐点随机**：点本身是均匀重复的圆点，
  * 明暗由几层很大的软光斑叠成一张「云」去压（mask）——
@@ -15,6 +16,8 @@ $dot-ink: rgba(19, 19, 19, 0.3);
 
 $cards-width: 900px;
 $cards-gap: 16px;
+/* 一行四张时的单卡宽度；少 1px 留余量，避免亚像素取整把第四张挤到下一行 */
+$card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
 
 .page {
   position: relative;
@@ -22,8 +25,10 @@ $cards-gap: 16px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 44px;
   min-height: 100vh;
-  padding: 0 40px;
+  /* 下边比上边多留 40px：整块内容在垂直居中的基础上再往上抬 20px */
+  padding: 72px 40px 112px;
   background-color: t.$paper;
   color: t.$ink-1;
 
@@ -77,18 +82,75 @@ $cards-gap: 16px;
   }
 }
 
-/* 四张卡横排；宽度固定，PC 上就是正中一条 */
-.cards {
+/*
+ * 页标题：压在点阵之上，常态字重（不加粗）。
+ * 「Nortu」大一号、「自由语」小一号，两块字垂直居中对齐。
+ */
+.heading {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $cards-gap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: t.$ink-1;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.headingMain {
+  font-size: 32px;
+  letter-spacing: 0.02em;
+}
+
+.headingSub {
+  font-size: 28px;
+  letter-spacing: 0.04em;
+}
+
+/* 一个大类：小标题 + 一排卡片，小标题与卡片行都按版面水平居中 */
+.section {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
   width: $cards-width;
 }
 
+/* 小标题：Nortu 语词（zoxıg / uzgo）比中文大一档，两块按基线对齐 */
+.sectionTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  color: t.$ink-3;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+  text-align: center;
+}
+
+.sectionWord {
+  font-size: 24px;
+  line-height: 32px;
+}
+
 /*
- * 卡片：左边两行字（类别 + 标题），右边一枚箭头，箭头与整块内容垂直居中。
+ * 一类里的卡横排，每张等宽（900px 宽下正好四张）；
+ * 不满四张时整行居中，不会在右边留一个空位。
+ */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, $card-width);
+  justify-content: center;
+  gap: $cards-gap;
+  width: 100%;
+}
+
+/*
+ * 卡片：左边两到三行字（类别可缺省 + 标题 + 作者），右边一枚箭头，箭头与整块内容垂直居中。
  * 高度跟着内容走，不留多余的空白。
  * 深色底 + 浅色字，在浅灰纸面上压出对比。
  */
@@ -138,9 +200,17 @@ $cards-gap: 16px;
 .title {
   color: t.$ink-dark-1;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 27px;
   letter-spacing: 0.01em;
+}
+
+/* 第三行署名：比标题轻一档，不抢视线 */
+.author {
+  color: t.$ink-dark-3;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.02em;
 }
 
 .arrow {
