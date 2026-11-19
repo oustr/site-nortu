@@ -11,3 +11,15 @@ $ink-2: #3c3c3c;
 $ink-3: #6d6d6d;
 $ink-4: #9a9a9a;
 $ink-5: #c3c3c3;
+
+/*
+ * 深色块（卡片等）：把上面那套反过来用。
+ * 底是比 $ink-1 浅一档的深灰，字接近 $paper。
+ */
+$surface-dark: #404040;
+$surface-dark-hover: #363636;
+$line-dark: #4f4f4f;
+$line-dark-strong: #666666;
+$ink-dark-1: #f5f5f5;
+$ink-dark-2: #cecece;
+$ink-dark-3: #909090;

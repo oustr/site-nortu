@@ -1,4 +1,4 @@
-import { RiArrowRightUpLine } from "@remixicon/react";
+import { RiArrowRightLine } from "@remixicon/react";
 import styles from "./HomePage.module.scss";
 
 interface ResourceLink {
@@ -47,7 +47,7 @@ const HomePage = () => (
             <span className={styles.label}>{item.label}</span>
             <span className={styles.title}>{item.title}</span>
           </span>
-          <RiArrowRightUpLine size={18} className={styles.arrow} />
+          <RiArrowRightLine size={24} className={styles.arrow} />
         </a>
       ))}
     </div>

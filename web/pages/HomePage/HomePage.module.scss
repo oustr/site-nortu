@@ -9,7 +9,7 @@
  * 光斑的尺寸和位置全部写死、不掺随机数，每次进来分布都一样。
  */
 
-$dot-pitch: 26px; // 点距：比纸面默认的密点更散
+$dot-pitch: 22px; // 点距：略密于纸面默认，又不至于糊成一片
 $dot-radius: 1px; // 点半径（直径 2px）
 $dot-ink: rgba(19, 19, 19, 0.3);
 
@@ -88,33 +88,35 @@ $cards-gap: 16px;
 }
 
 /*
- * 卡片：左边两行字（类别 + 标题），右边一枚箭头，顶对齐。
+ * 卡片：左边两行字（类别 + 标题），右边一枚箭头，箭头与整块内容垂直居中。
  * 高度跟着内容走，不留多余的空白。
+ * 深色底 + 浅色字，在浅灰纸面上压出对比。
  */
 .card {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 18px 18px 20px;
-  border: 1px solid t.$line;
+  border: 1px solid t.$line-dark;
   border-radius: 12px;
-  background-color: t.$surface;
-  color: inherit;
+  background-color: t.$surface-dark;
+  color: t.$ink-dark-1;
   text-decoration: none;
   transition:
-    transform 200ms,
+    background-color 200ms,
     border-color 200ms,
     box-shadow 200ms;
 
+  /* 悬停：底色压深一档、描边提亮、阴影略加深，卡片本身原地不动 */
   &:hover {
-    transform: translateY(-2px);
-    border-color: t.$line-strong;
-    box-shadow: 0 8px 24px rgba(19, 19, 19, 0.07);
+    background-color: t.$surface-dark-hover;
+    border-color: t.$line-dark-strong;
+    box-shadow: 0 4px 12px rgba(19, 19, 19, 0.14);
 
     .arrow {
-      color: t.$ink-1;
-      transform: translate(1px, -1px);
+      color: t.$ink-dark-1;
+      transform: translateX(2px);
     }
   }
 }
@@ -127,14 +129,14 @@ $cards-gap: 16px;
 }
 
 .label {
-  color: t.$ink-4;
-  font-size: 11.5px;
-  line-height: 16px;
-  letter-spacing: 0.14em;
+  color: t.$ink-dark-2;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: 0.1em;
 }
 
 .title {
-  color: t.$ink-1;
+  color: t.$ink-dark-1;
   font-size: 20px;
   font-weight: 700;
   line-height: 27px;
@@ -143,7 +145,7 @@ $cards-gap: 16px;
 
 .arrow {
   flex: none;
-  color: t.$ink-5;
+  color: t.$ink-dark-3;
   transition:
     color 200ms,
     transform 200ms;
