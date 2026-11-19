@@ -83,6 +83,43 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
 }
 
 /*
+ * 右上角联系方式钮：固定在视口角上，不进文档流，不随内容居中而挪动。
+ * 深底浅图标，和下面的资源卡同一套配色（入口也压得住）。
+ */
+.contactButton {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid t.$line-dark;
+  border-radius: 10px;
+  background-color: t.$surface-dark;
+  color: t.$ink-dark-2;
+  cursor: pointer;
+  transition:
+    background-color 200ms,
+    border-color 200ms,
+    color 200ms;
+
+  &:hover {
+    background-color: t.$surface-dark-hover;
+    border-color: t.$line-dark-strong;
+    color: t.$ink-dark-1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$ink-3;
+    outline-offset: 2px;
+  }
+}
+
+/*
  * 页标题：压在点阵之上，常态字重（不加粗）。
  * 「Nortu」大一号、「自由语」小一号，两块字垂直居中对齐。
  */
@@ -127,7 +164,8 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
   margin: 0;
   color: t.$ink-3;
   font-size: 20px;
-  font-weight: 500;
+  /* 字体只有 400 一个字重，写 500 只会触发合成加粗，这里按常规字重排 */
+  font-weight: 400;
   line-height: 28px;
   text-align: center;
 }

@@ -1,4 +1,10 @@
-import { RiArrowRightLine, RiDownloadLine } from "@remixicon/react";
+import { useCallback, useState } from "react";
+import {
+  RiArrowRightLine,
+  RiDownloadLine,
+  RiShareLine,
+} from "@remixicon/react";
+import ContactDialog from "../../components/ContactDialog/ContactDialog.tsx";
 import styles from "./HomePage.module.scss";
 import vocabularyUrl from "../../assets/downloads/nortu-vocabulary.jsonl?url";
 import nozuSansUrl from "../../assets/fonts/nozu-sans-nortu.woff2?url";
@@ -96,50 +102,66 @@ const sections: ResourceSection[] = [
   },
 ];
 
-const HomePage = () => (
-  <div className={styles.page}>
-    <h1 className={styles.heading}>
-      <span className={styles.headingMain}>Nortu</span>
-      <span className={styles.headingSub}>自由语</span>
-    </h1>
-    {sections.map((section) => (
-      <section key={section.title} className={styles.section}>
-        <h2 className={styles.sectionTitle}>
-          <span className={styles.sectionWord}>{section.word}</span>
-          <span>{section.title}</span>
-        </h2>
-        <div className={styles.cards}>
-          {section.links.map((item) => {
-            const isDownload = Boolean(item.download);
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
-                download={item.download}
-                target={isDownload ? undefined : "_blank"}
-                rel={isDownload ? undefined : "noreferrer"}
-                className={styles.card}
-              >
-                <span className={styles.text}>
-                  {item.label && (
-                    <span className={styles.label}>{item.label}</span>
+const HomePage = () => {
+  const [contactOpen, setContactOpen] = useState(false);
+  const closeContact = useCallback(() => setContactOpen(false), []);
+
+  return (
+    <div className={styles.page}>
+      {/* 右上角联系方式：点开弹窗，与页面内容互不干扰 */}
+      <button
+        type="button"
+        className={styles.contactButton}
+        onClick={() => setContactOpen(true)}
+        aria-label="联系方式"
+        title="联系方式"
+      >
+        <RiShareLine size={20} />
+      </button>
+      <h1 className={styles.heading}>
+        <span className={styles.headingMain}>Nortu</span>
+        <span className={styles.headingSub}>自由语</span>
+      </h1>
+      {sections.map((section) => (
+        <section key={section.title} className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.sectionWord}>{section.word}</span>
+            <span>{section.title}</span>
+          </h2>
+          <div className={styles.cards}>
+            {section.links.map((item) => {
+              const isDownload = Boolean(item.download);
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
+                  download={item.download}
+                  target={isDownload ? undefined : "_blank"}
+                  rel={isDownload ? undefined : "noreferrer"}
+                  className={styles.card}
+                >
+                  <span className={styles.text}>
+                    {item.label && (
+                      <span className={styles.label}>{item.label}</span>
+                    )}
+                    <span className={styles.title}>{item.title}</span>
+                    <span className={styles.author}>by {item.author}</span>
+                  </span>
+                  {isDownload ? (
+                    <RiDownloadLine size={24} className={styles.arrow} />
+                  ) : (
+                    <RiArrowRightLine size={24} className={styles.arrow} />
                   )}
-                  <span className={styles.title}>{item.title}</span>
-                  <span className={styles.author}>by {item.author}</span>
-                </span>
-                {isDownload ? (
-                  <RiDownloadLine size={24} className={styles.arrow} />
-                ) : (
-                  <RiArrowRightLine size={24} className={styles.arrow} />
-                )}
-              </a>
-            );
-          })}
-        </div>
-      </section>
-    ))}
-  </div>
-);
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+      <ContactDialog open={contactOpen} onClose={closeContact} />
+    </div>
+  );
+};
 
 export default HomePage;

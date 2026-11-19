@@ -1,0 +1,239 @@
+@use "../../styles/tokens" as t;
+
+/*
+ * 联系方式弹窗：整页压暗一层，正中一块白卡。
+ * 卡里是若干「联系方式卡」——平台名 + 浅灰副标题 + 一条主内容（点整张卡复制）。
+ * 作者信息与社区自由语之间用一条虚线隔开。
+ */
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: rgba(19, 19, 19, 0.36);
+  animation: overlay-in 180ms ease-out;
+}
+
+/* 卡片：窄屏时撑满可用宽度，超高时卡内滚动，不把整页顶出可视区 */
+.dialog {
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 26px 28px 28px;
+  border: 1px solid t.$line-strong;
+  border-radius: 16px;
+  background-color: t.$surface;
+  color: t.$ink-1;
+  box-shadow: 0 24px 56px rgba(19, 19, 19, 0.2);
+  animation: dialog-in 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.headerText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  /* 字体只有 400 一个字重，写 500 只会触发合成加粗 */
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 0;
+  color: t.$ink-3;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.02em;
+}
+
+/* 关闭钮：贴右上角的一枚方钮，与首页右上角的触发钮同一套样式 */
+.close {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid t.$line;
+  border-radius: 8px;
+  background-color: t.$surface;
+  color: t.$ink-3;
+  cursor: pointer;
+  transition:
+    background-color 160ms,
+    border-color 160ms,
+    color 160ms;
+
+  &:hover {
+    border-color: t.$line-strong;
+    background-color: t.$paper;
+    color: t.$ink-1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$ink-3;
+    outline-offset: 2px;
+  }
+}
+
+/* 一排两列；弹窗窄到一列放不下两张时自动变成单列，不挤成一条细缝 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/*
+ * 单张联系方式卡：浅灰底、无描边，靠底色与白弹窗区分开。
+ * 整张卡就是一个复制按钮，右上角图标提示可以复制。
+ */
+.card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 14px 14px;
+  border: none;
+  border-radius: 12px;
+  background-color: t.$paper;
+  color: t.$ink-1;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms;
+
+  &:hover {
+    background-color: t.$line;
+
+    .copy {
+      color: t.$ink-2;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$ink-3;
+    outline-offset: 2px;
+  }
+}
+
+.cardText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  /* 给右上角的复制图标留位，长副标题也不会压到图标下面 */
+  padding-right: 18px;
+}
+
+/* 标题整行统一加粗：拉丁字母与中文用同一档字重，不靠中文字形本身显得更重 */
+.cardLabel {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.02em;
+}
+
+/* 副标题：群名 / 用户名，浅一档灰，不抢主内容的视线 */
+.cardDesc {
+  color: t.$ink-4;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 主内容：id / 群号，比其它两行都大一档；数字等宽，几位数一眼能数清 */
+.cardValue {
+  margin-top: 10px;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.copy,
+.copyActive {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  transition: color 160ms;
+}
+
+.copy {
+  color: t.$ink-5;
+}
+
+.copyActive {
+  color: t.$ink-2;
+}
+
+/* 横贯卡片的一条虚线，隔开作者信息与社区自由语 */
+.divider {
+  margin: 20px 0;
+  border: none;
+  border-top: 2px dashed t.$line-strong;
+}
+
+.community {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.note {
+  margin: 0;
+  color: t.$ink-3;
+  font-size: 13px;
+  line-height: 22px;
+  letter-spacing: 0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .dialog {
+    animation: none;
+  }
+}
