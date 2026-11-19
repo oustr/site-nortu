@@ -3,11 +3,16 @@
 /*
  * 全站字体：Nozu Sans for Nortu（自托管）。
  * 字体文件在 web/assets/fonts/，由 Vite 打包并加 hash。
+ *
+ * 这份 woff2 是子集字体、只有一个字重，所以这里只登记 400：
+ * 加粗交给浏览器做合成（faux bold），700 才真的压得出来。
+ * 若写成 `font-weight: 100 900`，浏览器会认为 700 也有真字重，
+ * 于是不合成，粗体看起来跟常规一样。
  */
 @font-face {
   font-family: "Nozu Sans";
   src: url("./assets/fonts/nozu-sans-nortu.woff2") format("woff2");
-  font-weight: 100 900;
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
