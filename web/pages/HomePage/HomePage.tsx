@@ -8,6 +8,8 @@ import ContactDialog from "../../components/ContactDialog/ContactDialog.tsx";
 import LinkDialog, {
   type LinkDialogContent,
 } from "../../components/LinkDialog/LinkDialog.tsx";
+import LogoDialog from "../../components/LogoDialog/LogoDialog.tsx";
+import NortuLogo from "../../components/NortuLogo/NortuLogo.tsx";
 import styles from "./HomePage.module.scss";
 import vocabularyUrl from "../../assets/downloads/nortu-vocabulary.jsonl?url";
 import textbookPdfUrl from "../../assets/downloads/自由语教材261120a.pdf?url";
@@ -173,6 +175,9 @@ const sections: ResourceSection[] = [
 const HomePage = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const closeContact = useCallback(() => setContactOpen(false), []);
+  /** 标题左边的 logo 钮：点开看标记的比例图 */
+  const [logoOpen, setLogoOpen] = useState(false);
+  const closeLogo = useCallback(() => setLogoOpen(false), []);
   /** 当前打开的合并卡弹窗，null 表示都没开 */
   const [dialogContent, setDialogContent] = useState<LinkDialogContent | null>(
     null
@@ -192,7 +197,19 @@ const HomePage = () => {
         <RiShareLine size={20} />
       </button>
       <h1 className={styles.heading}>
-        <span className={styles.headingMain}>Nortu</span>
+        {/* logo 与 Nortu 同一组、按基线对齐：标记底边正好压在文字基线上 */}
+        <span className={styles.headingWord}>
+          <button
+            type="button"
+            className={styles.logoButton}
+            onClick={() => setLogoOpen(true)}
+            aria-label="查看自由语 logo 比例"
+            title="自由语 logo"
+          >
+            <NortuLogo className={styles.logoMark} />
+          </button>
+          <span className={styles.headingMain}>Nortu</span>
+        </span>
         <span className={styles.headingSub}>自由语</span>
       </h1>
       {sections.map((section) => (
@@ -256,6 +273,7 @@ const HomePage = () => {
       ))}
       <ContactDialog open={contactOpen} onClose={closeContact} />
       <LinkDialog content={dialogContent} onClose={closeDialog} />
+      <LogoDialog open={logoOpen} onClose={closeLogo} />
     </div>
   );
 };
