@@ -125,21 +125,26 @@ $heading-gap: 64px;
 }
 
 /* 标题主字「Nortu」的字号：logo 的尺寸也由它换算，改这一处两处一起动 */
-$heading-main-size: 48px;
+$heading-main-size: 96px;
+/* logo 与「Nortu」之间的空隙；读音标注要靠它换算对齐位置 */
+$heading-logo-gap: 12px;
+/* logo 的尺寸：高 0.75em，宽按 26 : 21 由高推出 */
+$heading-logo-height: 0.75 * $heading-main-size;
+$heading-logo-width: math.div($heading-logo-height * 26, 21);
 
 /*
- * 页标题：压在点阵之上。
- * 左边是一组「logo + Nortu」，右边「自由语」小一号，整行垂直居中对齐。
- * 加粗与卡片标题、联系方式弹窗同一套：Nozu 只有 400，拉丁字符走合成加粗，
- * 中文回退到系统中文字体，拿到的是真加粗。
+ * 页标题：压在点阵之上，分上下两行。
+ * 上面一行「logo + Nortu」占满主题，宽度决定标题盒子的宽度、整行水平居中；
+ * 下面一行「自由语」小一号、不加粗，靠右贴住上面一行的右边缘。
+ * 「Nortu」的加粗与卡片标题、联系方式弹窗同一套：Nozu 只有 400，
+ * 拉丁字符走合成加粗。
  */
 .heading {
   position: relative;
   z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  /* 「Nortu」与「自由语」之间只留一点缝，靠字号差拉开层次 */
-  gap: 6px;
   /*
    * 标题与下面第一个大类之间要更空一些：页面整体 gap 只负责大类之间，
    * 这里补上差额（$heading-gap − $section-gap）
@@ -148,7 +153,26 @@ $heading-main-size: 48px;
   color: t.$ink-1;
   font-weight: 700;
   /* 定死像素行高：两段字号不同，若用 1.2 会各按自己的字号换算，行高就对不上 */
-  line-height: 52px;
+  line-height: 104px;
+}
+
+/*
+ * 读音标注：压在「Nortu」正上方一行。颜色比主字浅一档、常规字重，不抢主题。
+ * 水平位置：标题整组的中心比「Nortu」的中心偏左半个「logo + 空隙」，
+ * 所以这里补上这段宽度，视觉上正好落在「Nortu」上方。
+ */
+.headingPhonetic {
+  /* 左外边距参与居中计算，盒子会右移一半，于是内容右移一整段宽度 */
+  margin-left: $heading-logo-width + $heading-logo-gap;
+  margin-bottom: -4px;
+  /* 纯视觉再下移一点，靠近下面的主字；不影响这一块的排版与居中 */
+  position: relative;
+  top: 12px;
+  color: t.$ink-2;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 40px;
+  letter-spacing: 0.06em;
 }
 
 /*
@@ -159,10 +183,10 @@ $heading-main-size: 48px;
   display: flex;
   align-items: baseline;
   /*
-   * 标记与字之间的空隙：组合图上约 0.3 倍标记高；这里的标记高 36px，
-   * 减去字形自带的左侧留白（约 2px）后取 8px，视觉间距与图一致。
+   * 标记与字之间的空隙：组合图上约 0.3 倍标记高；这里的标记高 72px，
+   * 减去字形自带的左侧留白（约 4px）后再收紧 4px，取 12px。
    */
-  gap: 8px;
+  gap: $heading-logo-gap;
 }
 
 /*
@@ -181,10 +205,10 @@ $heading-main-size: 48px;
   color: inherit;
   cursor: pointer;
   /*
-   * 位置微调：标记往左、往下各挪一点，贴住字的重心。
+   * 位置微调：标记往左、往下各挪一点，贴住字的重心（按标题主字放大两倍同步加倍）。
    * 用 transform 而不是 margin，纯视觉位移，不影响这一行的排版与居中。
    */
-  transform: translate(-3px, 2px);
+  transform: translate(-6px, 4px);
   transition: opacity 160ms;
 
   &:hover {
@@ -200,14 +224,14 @@ $heading-main-size: 48px;
 /*
  * 标记本体：高度与「Nortu」的字形成固定比例，宽度按 26 : 21 由高推出。
  * 比例取自组合图——标记 105px 对文字 96px，即 1.09 × Cap Height；
- * 这款字的大写字母实测只有 0.6875em（48px 时是 33px），1.09 × 0.6875 ≈ 0.75em。
+ * 这款字的大写字母实测只有 0.6875em（96px 时是 66px），1.09 × 0.6875 ≈ 0.75em。
  */
 .logoMark {
   display: block;
-  /* 按钮上的 font-size 归零了，em 要按标题主字的字号来算，这里单独给回来 */
+  /* 按钮上的 font-size 归零了，尺寸直接用按主字字号换算出的像素值 */
   font-size: $heading-main-size;
-  height: 0.75em;
-  width: calc(0.75em * 26 / 21);
+  height: $heading-logo-height;
+  width: $heading-logo-width;
 }
 
 .headingMain {
@@ -215,8 +239,20 @@ $heading-main-size: 48px;
   letter-spacing: 0.02em;
 }
 
+/*
+ * 「自由语」：排在「logo + Nortu」下方一行，靠右对齐到上一行的右边缘，
+ * 常规字重（不加粗），比主字明显小一档。
+ * 行高单独写死，否则会继承主字的 104px，把上下两行撑开。
+ */
 .headingSub {
-  font-size: 36px;
+  align-self: flex-end;
+  /* 负的上外边距：把这一行往上一行的字脚收紧里提 */
+  margin-top: -10px;
+  /* 右边缘再往左收一点，不贴着 Nortu 的末笔 */
+  margin-right: 14px;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 38px;
   letter-spacing: 0.04em;
 }
 

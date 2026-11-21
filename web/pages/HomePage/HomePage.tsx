@@ -197,6 +197,8 @@ const HomePage = () => {
         <RiShareLine size={20} />
       </button>
       <h1 className={styles.heading}>
+        {/* 读音标注：压在 Nortu 正上方，浅色、常规字重 */}
+        <span className={styles.headingPhonetic}>/no ru ts/</span>
         {/* logo 与 Nortu 同一组、按基线对齐：标记底边正好压在文字基线上 */}
         <span className={styles.headingWord}>
           <button
