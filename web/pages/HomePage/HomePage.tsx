@@ -51,10 +51,10 @@ const vocabularyDialog: LinkDialogContent = {
   ],
 };
 
-/** 「自由语语法」合并卡：三篇语法文档 */
+/** 「自由语语法」合并卡：八篇语法文档 */
 const grammarDialog: LinkDialogContent = {
   title: "自由语语法",
-  note: "以下三篇文档，点任意一条在新标签页打开",
+  note: "以下八篇文档，点任意一条在新标签页打开",
   items: [
     {
       title: "语块",
@@ -65,8 +65,28 @@ const grammarDialog: LinkDialogContent = {
       href: "https://workbuddy.link/p/Nvrs3hfpDlKN87QraceNQk?source=2",
     },
     {
+      title: "主宾 主被动",
+      href: "https://workbuddy.link/p/MdpfGOnPuUQkhs5VOcuJVu?source=2",
+    },
+    {
       title: "uv",
       href: "https://workbuddy.link/p/Ia9RUMvqSUTAWC7kgjhXYZ?source=2",
+    },
+    {
+      title: "使动",
+      href: "https://workbuddy.link/p/pc3ladNQ9ql2QUEW6zwlTY?source=2",
+    },
+    {
+      title: "更 最",
+      href: "https://workbuddy.link/p/g2JXp1fqiEPMrAxr2D9HKD?source=2",
+    },
+    {
+      title: "能 可能",
+      href: "https://workbuddy.link/p/ghnDckzD9lCU3HWmJCtk3I?source=2",
+    },
+    {
+      title: "数字",
+      href: "https://workbuddy.link/p/CzZKnp818PhxBGHbvLUOaz?source=2",
     },
   ],
 };
