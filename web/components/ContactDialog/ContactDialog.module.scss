@@ -2,7 +2,8 @@
 
 /*
  * 联系方式弹窗：整页压暗一层，正中一块白卡。
- * 卡里是若干「联系方式卡」——平台名 + 浅灰副标题 + 一条主内容（点整张卡复制）。
+ * 卡里是若干「联系方式卡」——平台名 + 浅灰副标题 + 一条主内容（点整张卡复制）；
+ * 讨论群那一张合了二维码：卡头平台名 + 复制图标，卡身左二维码、右群名与群号。
  * 作者信息与社区自由语之间用一条虚线隔开。
  */
 
@@ -164,30 +165,84 @@
   padding-right: 18px;
 }
 
-/* QQ 群号卡 + 二维码并排，整体占栅格的一个格子 */
-.group {
+/*
+ * 讨论群卡：二维码与群号合并在同一张浅灰卡里。
+ * 卡头一行（平台名 + 复制图标），卡身左二维码、右群名与群号。
+ */
+.groupCard {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  min-width: 0;
+  padding: 12px 14px 14px;
+  border: none;
+  border-radius: 12px;
+  background-color: t.$paper;
+  color: t.$ink-1;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms;
 
-  > .card {
-    flex: 1 1 auto;
-    min-width: 0;
+  &:hover {
+    background-color: t.$line;
+
+    .groupCopy {
+      color: t.$ink-2;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$ink-3;
+    outline-offset: 2px;
   }
 }
 
-/* 二维码：浅灰底方形块，下面一行小字说明；白底二维码不贴边 */
+/* 卡头：平台名贴左，复制图标贴右，各占一端 */
+.groupHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.groupLabel {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.02em;
+}
+
+.groupCopy,
+.groupCopyActive {
+  flex: none;
+  transition: color 160ms;
+}
+
+.groupCopy {
+  color: t.$ink-5;
+}
+
+.groupCopyActive {
+  color: t.$ink-2;
+}
+
+/* 卡身：左二维码、右文字，二维码定宽，文字列吃掉剩余宽度 */
+.groupBody {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* 二维码块：白底方形承托，下面一行小字说明 */
 .qr {
   flex: none;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 6px;
-  margin: 0;
-  padding: 10px;
-  border-radius: 12px;
-  background-color: t.$paper;
+  padding: 8px 8px 6px;
+  border-radius: 10px;
+  background-color: t.$surface;
 }
 
 .qrImage {
@@ -199,9 +254,39 @@
 
 .qrCaption {
   color: t.$ink-4;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 11px;
+  line-height: 14px;
   letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* 右侧两行：群名在上、群号在下，整体与二维码垂直居中 */
+.groupInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* 群名：浅一档灰，交代这张卡是什么群，不抢群号的视线 */
+.groupName {
+  color: t.$ink-2;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.01em;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 群号：这张卡的主角，数字等宽 */
+.groupValue {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* 标题整行统一加粗：拉丁字母与中文用同一档字重，不靠中文字形本身显得更重 */
@@ -382,6 +467,14 @@
   font-size: 13px;
   line-height: 22px;
   letter-spacing: 0.01em;
+}
+
+/* 极窄屏：二维码与群名左右排会挤成一团，改成上下排 */
+@media (max-width: 420px) {
+  .groupBody {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

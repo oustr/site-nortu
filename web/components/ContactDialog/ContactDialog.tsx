@@ -24,9 +24,12 @@ interface ContactBlock {
   rows: ContactRowItem[];
 }
 
-const authorCards: ContactCard[] = [
-  { label: "QQ群", desc: "自由语讨论群", value: "1048896534" },
-];
+/** 自由语讨论群：二维码 + 群名 + 群号收在同一张卡里，点卡复制群号 */
+const groupInfo = {
+  label: "QQ群",
+  name: "自由语（Nortu）讨论群",
+  value: "1048896534",
+};
 
 const authorBlock: ContactBlock = {
   heading: "nosto",
@@ -131,6 +134,51 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
     );
   };
 
+  /*
+   * 讨论群卡：卡头是平台名与复制图标，卡身左边二维码、右边群名与群号。
+   * 整张卡仍是一个复制按钮，点哪儿都复制群号。
+   */
+  const renderGroupCard = () => {
+    const key = `${groupInfo.label}-${groupInfo.value}`;
+    const copied = copiedKey === key;
+
+    return (
+      <button
+        key={key}
+        type="button"
+        className={styles.groupCard}
+        onClick={() => handleCopy(groupInfo.value, key)}
+        aria-label={`复制 ${groupInfo.label}：${groupInfo.value}`}
+      >
+        <span className={styles.groupHead}>
+          <span className={styles.groupLabel}>{groupInfo.label}</span>
+          {copied ? (
+            <RiCheckLine size={16} className={styles.groupCopyActive} />
+          ) : (
+            <RiFileCopyLine size={16} className={styles.groupCopy} />
+          )}
+        </span>
+        <span className={styles.groupBody}>
+          <span className={styles.qr}>
+            <img
+              className={styles.qrImage}
+              src={qqGroupQrUrl}
+              alt={`${groupInfo.name} ${groupInfo.value} 二维码`}
+              width={84}
+              height={84}
+              loading="lazy"
+            />
+            <span className={styles.qrCaption}>扫码进群噢</span>
+          </span>
+          <span className={styles.groupInfo}>
+            <span className={styles.groupName}>{groupInfo.name}</span>
+            <span className={styles.groupValue}>{groupInfo.value}</span>
+          </span>
+        </span>
+      </button>
+    );
+  };
+
   /* 合并块：一个名字带若干行平台号，点哪行复制哪行 */
   const renderBlock = (block: ContactBlock) => (
     <div key={block.heading} className={styles.block}>
@@ -190,21 +238,8 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
 
         <h3 className={styles.sectionTitle}>自由语及作者</h3>
         <div className={styles.grid}>
-          {/* 自由语 QQ 群：群号卡旁边挂一张扫码入群的二维码 */}
-          <div className={styles.group}>
-            {authorCards.map(renderCard)}
-            <figure className={styles.qr}>
-              <img
-                className={styles.qrImage}
-                src={qqGroupQrUrl}
-                alt="自由语QQ群 1048896534 二维码"
-                width={84}
-                height={84}
-                loading="lazy"
-              />
-              <figcaption className={styles.qrCaption}>扫码进群噢</figcaption>
-            </figure>
-          </div>
+          {/* 自由语讨论群：二维码与群号合并在同一张卡里 */}
+          {renderGroupCard()}
           {renderBlock(authorBlock)}
         </div>
 
