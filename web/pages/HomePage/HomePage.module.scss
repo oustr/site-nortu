@@ -120,28 +120,31 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
 }
 
 /*
- * 页标题：压在点阵之上，常态字重（不加粗）。
+ * 页标题：压在点阵之上。
  * 「Nortu」大一号、「自由语」小一号，两块字垂直居中对齐。
+ * 加粗与卡片标题、联系方式弹窗同一套：Nozu 只有 400，拉丁字符走合成加粗，
+ * 中文回退到系统中文字体，拿到的是真加粗。
  */
 .heading {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   margin: 0;
   color: t.$ink-1;
-  font-weight: 400;
-  line-height: 1.2;
+  font-weight: 700;
+  /* 定死像素行高：两段字号不同，若用 1.2 会各按自己的字号换算，行高就对不上 */
+  line-height: 52px;
 }
 
 .headingMain {
-  font-size: 32px;
+  font-size: 48px;
   letter-spacing: 0.02em;
 }
 
 .headingSub {
-  font-size: 28px;
+  font-size: 36px;
   letter-spacing: 0.04em;
 }
 
@@ -166,13 +169,13 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
   font-size: 20px;
   /* 字体只有 400 一个字重，写 500 只会触发合成加粗，这里按常规字重排 */
   font-weight: 400;
-  line-height: 28px;
+  /* 两段字号不同，行高统一写死：Nortu 语词继承这一档即可，不再单独覆盖 */
+  line-height: 32px;
   text-align: center;
 }
 
 .sectionWord {
   font-size: 24px;
-  line-height: 32px;
 }
 
 /*
@@ -203,6 +206,8 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
   background-color: t.$surface-dark;
   color: t.$ink-dark-1;
   text-decoration: none;
+  /* 卡片整块是跳转 / 弹窗入口，不允许选中文字，避免误拖出蓝色选区 */
+  user-select: none;
   transition:
     background-color 200ms,
     border-color 200ms,
@@ -246,10 +251,15 @@ $card-width: math.div($cards-width - 3 * $cards-gap, 4) - 1px;
   letter-spacing: 0.1em;
 }
 
+/*
+ * 卡片主标题（最大的一行）：与联系方式弹窗同一种加粗方式。
+ * Nozu 只登记了 400，所以这里的 700 落在拉丁字符上是合成加粗，
+ * 中文回退到系统中文字体，拿到的是真加粗。
+ */
 .title {
   color: t.$ink-dark-1;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 27px;
   letter-spacing: 0.01em;
 }
