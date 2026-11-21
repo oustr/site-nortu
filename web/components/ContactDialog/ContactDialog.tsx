@@ -58,7 +58,8 @@ interface ContactDialogProps {
 /*
  * 联系方式弹窗：遮罩 + 正中白卡。
  * 弹窗挂在 body 上（portal），不受首页排版与点阵层的影响；
- * 打开时锁住页面滚动，Esc 或点遮罩空白处关闭。
+ * 打开时锁住页面滚动。
+ * 关闭方式只有右上角的 ×：点遮罩、按 Esc 都不关（项目规范，见 .codebuddy/rules/site-nortu）。
  */
 const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
   /** 刚复制过的那张卡的 key，用来把图标换成对勾 */
@@ -68,19 +69,13 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
   useEffect(() => {
     if (!open) return;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
     const previousOverflow = document.body.style.overflow;
-
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [open, onClose]);
+  }, [open]);
 
   /* 关闭时把「已复制」的清掉，下次打开不会停在打勾状态 */
   useEffect(() => {
@@ -171,13 +166,8 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
   );
 
   return createPortal(
-    <div
-      className={styles.overlay}
-      /* 只认点遮罩本身：从弹窗内部冒上来的点击不算 */
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
+    /* 遮罩不挂关闭事件：只有 ✕ 能关，点空白处不做任何事 */
+    <div className={styles.overlay}>
       <div
         className={styles.dialog}
         role="dialog"

@@ -34,37 +34,26 @@ interface LinkDialogProps {
 
 /*
  * 合并卡弹窗：首页上同一类资源合并成一张卡，点开后在弹窗里逐条跳转 / 下载。
- * 壳与联系方式弹窗一致：挂在 body 上（portal），打开时锁页面滚动，
- * Esc 或点遮罩空白处关闭。
+ * 壳与联系方式弹窗一致：挂在 body 上（portal），打开时锁页面滚动。
+ * 关闭方式只有右上角的 ×：点遮罩、按 Esc 都不关（项目规范，见 .codebuddy/rules/site-nortu）。
  */
 const LinkDialog = ({ content, onClose }: LinkDialogProps) => {
   useEffect(() => {
     if (!content) return;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
     const previousOverflow = document.body.style.overflow;
-
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-  }, [content, onClose]);
+  }, [content]);
 
   if (!content) return null;
 
   return createPortal(
-    <div
-      className={styles.overlay}
-      /* 只认点遮罩本身：从弹窗内部冒上来的点击不算 */
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
+    /* 遮罩不挂关闭事件：只有 ✕ 能关，点空白处不做任何事 */
+    <div className={styles.overlay}>
       <div
         className={styles.dialog}
         role="dialog"
