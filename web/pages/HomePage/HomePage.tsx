@@ -53,10 +53,10 @@ const vocabularyDialog: LinkDialogContent = {
   ],
 };
 
-/** 「自由语语法」合并卡：八篇语法文档 */
+/** 「自由语语法」合并卡：十篇语法文档 */
 const grammarDialog: LinkDialogContent = {
   title: "自由语语法",
-  note: "以下八篇文档，点任意一条在新标签页打开",
+  note: "以下十篇文档，点任意一条在新标签页打开",
   items: [
     {
       title: "语块",
@@ -89,6 +89,14 @@ const grammarDialog: LinkDialogContent = {
     {
       title: "数字",
       href: "https://workbuddy.link/p/CzZKnp818PhxBGHbvLUOaz?source=2",
+    },
+    {
+      title: "ud、ux从句",
+      href: "https://workbuddy.link/p/eyXBXGANXNNwbWQPNPb0b6?source=2",
+    },
+    {
+      title: "xuz“从句”",
+      href: "https://workbuddy.link/p/kuZDfaOIx64rJ7ba9W21o0?source=2",
     },
   ],
 };
