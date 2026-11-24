@@ -3,7 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>site-nortu</title>
+    <title>Nortu 自由语</title>
+    <!--
+      favicon 用自由语标记：浅色模式用深色 logo（favicon-light.svg），
+      深色模式用浅色 logo（favicon-dark.svg）。
+      Safari 不支持 link 上的 media 属性，所以统一由下面的脚本按系统主题切换；
+      href 先写成浅色模式那份，脚本没跑起来时也至少有个图标。
+    -->
+    <link id="favicon" rel="icon" type="image/svg+xml" href="/favicon-light.svg" />
+    <script>
+      (function () {
+        var link = document.getElementById("favicon");
+        // 已经是 Vite 按 base 重写过的路径，替换文件名即可保持前缀一致
+        var lightHref = link.getAttribute("href");
+        var darkHref = lightHref.replace("favicon-light", "favicon-dark");
+        var mq = window.matchMedia("(prefers-color-scheme: dark)");
+        function apply() {
+          link.href = mq.matches ? darkHref : lightHref;
+        }
+        apply();
+        if (mq.addEventListener) mq.addEventListener("change", apply);
+        else mq.addListener(apply);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

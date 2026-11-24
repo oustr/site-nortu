@@ -1,0 +1,5 @@
+<!-- 自由语标记 · 浅色模式用（#444444 的深色 logo；标签栏底色是浅灰，太深会显重） -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -2.5 26 26">
+  <path fill="#444444" d="M0 0h6l8 21H0Z" />
+  <path fill="#444444" d="M12 0h14v21h-6Z" />
+</svg>
