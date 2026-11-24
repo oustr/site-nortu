@@ -152,10 +152,16 @@ const sections: ResourceSection[] = [
     title: "游戏",
     links: [
       {
-        label: "自由语多邻国",
+        label: "自由语“多邻国”",
         title: "『诺斯通』",
         author: "酱的不卷",
         href: "https://nortu-free-language-l1-2.app.workbuddy.host/?sharecode=TNWRVMOI4N&shareId=b9a912e4a4844f22ac2017fd7985e543",
+      },
+      {
+        label: "“安卓版多邻国”",
+        title: "LanguageForge",
+        author: "九列茉芙",
+        href: "https://github.com/Myoslatal/language_forge/releases/tag/lang",
       },
       {
         title: "Nortu花园",

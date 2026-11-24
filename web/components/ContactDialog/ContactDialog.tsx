@@ -46,10 +46,16 @@ const communityCard: ContactCard = {
   value: "1134401051",
 };
 
-const contributorBlock: ContactBlock = {
-  heading: "酱的不卷",
-  rows: [{ label: "B站", name: "酱的不卷", value: "3707006902864287" }],
-};
+const contributorBlocks: ContactBlock[] = [
+  {
+    heading: "酱的不卷",
+    rows: [{ label: "B站", name: "酱的不卷", value: "3707006902864287" }],
+  },
+  {
+    heading: "九列茉芙",
+    rows: [{ label: "GitHub", name: "Myoslatal", value: "Myoslatal" }],
+  },
+];
 
 const COPIED_HOLD_MS = 1400;
 
@@ -246,7 +252,9 @@ const ContactDialog = ({ open, onClose }: ContactDialogProps) => {
         <hr className={styles.divider} />
 
         <h3 className={styles.sectionTitle}>自由语贡献者</h3>
-        <div className={styles.grid}>{renderBlock(contributorBlock)}</div>
+        <div className={styles.grid}>
+          {contributorBlocks.map((block) => renderBlock(block))}
+        </div>
 
         <hr className={styles.divider} />
 
