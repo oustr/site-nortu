@@ -131,6 +131,11 @@ $heading-logo-gap: 12px;
 /* logo 的尺寸：高 0.75em，宽按 26 : 21 由高推出 */
 $heading-logo-height: 0.75 * $heading-main-size;
 $heading-logo-width: math.div($heading-logo-height * 26, 21);
+/*
+ * 标题这一组（logo + Nortu）的字色：比正文的 $ink-1 浅一档。
+ * 主字大、又是合成加粗，用 #131313 会显得过重，退到 #222222 刚好。
+ */
+$heading-ink: #222222;
 
 /*
  * 页标题：压在点阵之上，分上下两行。
@@ -150,7 +155,7 @@ $heading-logo-width: math.div($heading-logo-height * 26, 21);
    * 这里补上差额（$heading-gap − $section-gap）
    */
   margin: 0 0 ($heading-gap - $section-gap);
-  color: t.$ink-1;
+  color: $heading-ink;
   font-weight: 700;
   /* 定死像素行高：两段字号不同，若用 1.2 会各按自己的字号换算，行高就对不上 */
   line-height: 104px;
