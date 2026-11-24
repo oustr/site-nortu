@@ -31,11 +31,24 @@
 @layer base {
   html {
     color-scheme: light;
+    /*
+     * 页面最小宽度：1000px 以下的视口不再继续挤压布局（卡片是固定宽度的，
+     * 挤下去只会换行错位），而是让文档保持 1000px 宽、横向出滚动条。
+     */
+    min-width: 1000px;
+    /*
+     * 手机浏览器（iOS Safari / Android Chrome）在比视口宽、可横向滚动的页面上
+     * 会自动放大正文字号（text autosizing），于是同一个宽度在手机上看着比
+     * 桌面端窗口放大了一圈；钉死 100% 之后，两边只剩「布局宽度」这一项差异。
+     */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply bg-white text-black antialiased;
     font-family: var(--font-sans);
+    min-width: 1000px;
   }
 
   /* 选中文字：深灰底 + 浅色字，和整体白底黑字区分开 */

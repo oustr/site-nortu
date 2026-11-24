@@ -31,7 +31,13 @@ $heading-gap: 64px;
   align-items: center;
   justify-content: center;
   gap: $section-gap;
+  /*
+   * 撑满一屏。移动端地址栏收放会改变可视高度，100vh 取的是带地址栏的大视口，
+   * 页面会凭空多出一截；改成 dvh 才是「当前可见的那块屏」，桌面端与 vh 等价。
+   * 前一行做旧浏览器兜底。
+   */
   min-height: 100vh;
+  min-height: 100dvh;
   /* 下边比上边多留 40px：整块内容在垂直居中的基础上再往上抬 20px */
   padding: 72px 40px 112px;
   background-color: t.$paper;
