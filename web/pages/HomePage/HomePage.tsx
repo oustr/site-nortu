@@ -123,65 +123,80 @@ interface ResourceSection {
   word: string;
   /** 大类标题 */
   title: string;
-  links: ResourceLink[];
+  /** 按行分组的卡片；每一行单独居中，行数自由 */
+  rows: ResourceLink[][];
 }
 
 const sections: ResourceSection[] = [
   {
     word: "zoxıg",
     title: "基建",
-    links: [
-      {
-        title: "自由语词汇表",
-        author: "nosto",
-        dialog: vocabularyDialog,
-      },
-      {
-        title: "自由语语法",
-        author: "nosto",
-        dialog: grammarDialog,
-      },
-      {
-        title: "自由语教材",
-        author: "酱的不卷",
-        dialog: textbookDialog,
-      },
-      {
-        label: "WOFF2自由语字体",
-        title: "Nozu硬黑体",
-        author: "nosto",
-        href: nozuSansUrl,
-        download: "Nozu Sans for Nortu.woff2",
-      },
+    rows: [
+      [
+        {
+          title: "自由语词汇表",
+          author: "nosto",
+          dialog: vocabularyDialog,
+        },
+        {
+          title: "自由语语法",
+          author: "nosto",
+          dialog: grammarDialog,
+        },
+        {
+          title: "自由语教材",
+          author: "酱的不卷",
+          dialog: textbookDialog,
+        },
+        {
+          label: "WOFF2自由语字体",
+          title: "Nozu硬黑体",
+          author: "nosto",
+          href: nozuSansUrl,
+          download: "Nozu Sans for Nortu.woff2",
+        },
+      ],
     ],
   },
   {
     word: "uzgo",
     title: "游戏",
-    links: [
-      {
-        label: "自由语“多邻国”",
-        title: "『诺斯通』",
-        author: "酱的不卷",
-        href: "https://nortu-free-language-l1-2.app.workbuddy.host/?sharecode=TNWRVMOI4N&shareId=b9a912e4a4844f22ac2017fd7985e543",
-      },
-      {
-        label: "“安卓版多邻国”",
-        title: "LanguageForge",
-        author: "九列茉芙",
-        href: "https://github.com/Myoslatal/language_forge/releases/tag/lang",
-      },
-      {
-        title: "Nortu花园",
-        author: "酱的不卷",
-        href: "https://nortu-garden.app.workbuddy.host/?sharecode=SNL77WKJI3&shareId=f9b6a709919941c4b2a524a1b0d07c5b",
-      },
-      {
-        label: "土豆农场",
-        title: "orgoz su-nonz",
-        author: "nosto",
-        href: "https://workbuddy.link/p/7HgSXDrvI9h9jGaqaNhYMK?source=2",
-      },
+    rows: [
+      /* 第一行：两个「多邻国」 */
+      [
+        {
+          label: "自由语“多邻国”",
+          title: "『诺斯通』",
+          author: "酱的不卷",
+          href: "https://nortu-free-language-l1-2.app.workbuddy.host/?sharecode=TNWRVMOI4N&shareId=b9a912e4a4844f22ac2017fd7985e543",
+        },
+        {
+          label: "“安卓版多邻国”",
+          title: "LanguageForge",
+          author: "九列茉芙",
+          href: "https://github.com/Myoslatal/language_forge/releases/tag/lang",
+        },
+      ],
+      /* 第二行：其余三款 */
+      [
+        {
+          title: "Nortu花园",
+          author: "酱的不卷",
+          href: "https://nortu-garden.app.workbuddy.host/?sharecode=SNL77WKJI3&shareId=f9b6a709919941c4b2a524a1b0d07c5b",
+        },
+        {
+          label: "土豆农场",
+          title: "orgoz su-nonz",
+          author: "nosto",
+          href: "https://workbuddy.link/p/7HgSXDrvI9h9jGaqaNhYMK?source=2",
+        },
+        {
+          label: "文字游戏",
+          title: "寻字 · Nortu",
+          author: "酱的不卷",
+          href: "https://nortu-word-find.app.workbuddy.host/?sharecode=S2HCBO7P27&shareId=79041b90b0ac4c29a1750288bc9c6209",
+        },
+      ],
     ],
   },
 ];
@@ -197,6 +212,55 @@ const HomePage = () => {
     null
   );
   const closeDialog = useCallback(() => setDialogContent(null), []);
+
+  /** 单张卡片：合并卡渲染成按钮，其余是链接 / 下载 */
+  const renderCard = (item: ResourceLink) => {
+    const isDownload = Boolean(item.download);
+    const cardBody = (
+      <>
+        <span className={styles.text}>
+          {item.label && <span className={styles.label}>{item.label}</span>}
+          <span className={styles.title}>{item.title}</span>
+          <span className={styles.author}>by {item.author}</span>
+        </span>
+        {isDownload ? (
+          <RiDownloadLine size={24} className={styles.arrow} />
+        ) : (
+          <RiArrowRightLine size={24} className={styles.arrow} />
+        )}
+      </>
+    );
+
+    /* 合并卡：本身不跳转，点开弹窗后逐条跳转 / 下载 */
+    const cardDialog = item.dialog;
+    if (cardDialog) {
+      return (
+        <button
+          key={item.title}
+          type="button"
+          className={`${styles.card} ${styles.cardButton}`}
+          onClick={() => setDialogContent(cardDialog)}
+          aria-haspopup="dialog"
+        >
+          {cardBody}
+        </button>
+      );
+    }
+
+    return (
+      <a
+        key={item.href}
+        href={item.href}
+        /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
+        download={item.download}
+        target={isDownload ? undefined : "_blank"}
+        rel={isDownload ? undefined : "noreferrer"}
+        className={styles.card}
+      >
+        {cardBody}
+      </a>
+    );
+  };
 
   return (
     <div className={styles.page}>
@@ -234,56 +298,13 @@ const HomePage = () => {
             <span className={styles.sectionWord}>{section.word}</span>
             <span>{section.title}</span>
           </h2>
-          <div className={styles.cards}>
-            {section.links.map((item) => {
-              const isDownload = Boolean(item.download);
-              const cardBody = (
-                <>
-                  <span className={styles.text}>
-                    {item.label && (
-                      <span className={styles.label}>{item.label}</span>
-                    )}
-                    <span className={styles.title}>{item.title}</span>
-                    <span className={styles.author}>by {item.author}</span>
-                  </span>
-                  {isDownload ? (
-                    <RiDownloadLine size={24} className={styles.arrow} />
-                  ) : (
-                    <RiArrowRightLine size={24} className={styles.arrow} />
-                  )}
-                </>
-              );
-
-              /* 合并卡：本身不跳转，点开弹窗后逐条跳转 / 下载 */
-              const cardDialog = item.dialog;
-              if (cardDialog) {
-                return (
-                  <button
-                    key={item.title}
-                    type="button"
-                    className={`${styles.card} ${styles.cardButton}`}
-                    onClick={() => setDialogContent(cardDialog)}
-                    aria-haspopup="dialog"
-                  >
-                    {cardBody}
-                  </button>
-                );
-              }
-
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  /* 下载卡：就地存盘（文件名取 download 的值），不新开标签页 */
-                  download={item.download}
-                  target={isDownload ? undefined : "_blank"}
-                  rel={isDownload ? undefined : "noreferrer"}
-                  className={styles.card}
-                >
-                  {cardBody}
-                </a>
-              );
-            })}
+          <div className={styles.rows}>
+            {section.rows.map((row, rowIndex) => (
+              /* 每一行单独成网格、单独居中，行数不限 */
+              <div key={rowIndex} className={styles.cards}>
+                {row.map(renderCard)}
+              </div>
+            ))}
           </div>
         </section>
       ))}
