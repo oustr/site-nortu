@@ -174,7 +174,7 @@ const sections: ResourceSection[] = [
           label: "“安卓版多邻国”",
           title: "LanguageForge",
           author: "九列茉芙",
-          href: "https://github.com/Myoslatal/language_forge/releases/tag/lang",
+          href: "https://github.com/Myoslatal/language_forge/releases",
         },
       ],
       /* 第二行：其余三款 */
