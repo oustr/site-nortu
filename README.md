@@ -11,7 +11,20 @@
 - 字体：全站默认 Nozu Sans for Nortu，自托管在 `web/assets/fonts/nozu-sans-nortu.woff2`，`@font-face` 与 `--font-sans` 写在 `web/index.css`
 - 可下载资源：词汇表 `web/assets/downloads/nortu-vocabulary.jsonl`、字体 `web/assets/fonts/nozu-sans-nortu.woff2`；首页「基建」里用 `?url` 导入地址，以 `<a download>` 直接存盘（存盘文件名写在 `download` 属性里，与仓库内文件名无关）
 - 图标：`@remixicon/react`
-- 单页面应用：无路由，`web/pages/HomePage/` 直接由 `web/index.tsx` 渲染
+- 路由：`react-router-dom` v7，`BrowserRouter`（真实路径，无 `#`），入口 `web/App.tsx`
+
+## 路由
+
+| 路径 | 组件 | 说明 |
+| --- | --- | --- |
+| `/` | `web/pages/HomePage/` | 首页，静态 import（入口页不做懒加载） |
+| `/test` | `web/pages/TestPage/` | 测试页，`React.lazy` 按需加载，仅用于验证路由 |
+| `*` | `App.tsx` 内 `NotFound` | 兜底提示 + 回首页 |
+
+- `basename` 取 `import.meta.env.BASE_URL`（构建 `/nortu`、dev/preview `/`），新增路由不用关心部署路径
+- 除首页外的新页面一律 `lazy(() => import("./pages/XxxPage/XxxPage.tsx"))`，保证进站只下载当前页的 chunk
+- 路由间共享状态：Provider 包在 `<Routes>` 外层（见 `App.tsx` 注释），切页不会重挂
+- **GitHub Pages 没有 SPA fallback**：深链接/刷新靠 `public/404.html` 把 `/nortu/xxx` 改写为 `/nortu/?/xxx` 跳回 `index.html`，再由 `index.html` 里的内联脚本 `replaceState` 还原成 `/nortu/xxx`。`public/404.html` 必须随 `dist/` 一起发布到目标仓库根目录，且脚本里的 `pathSegmentsToKeep` 固定为 `1`（对应 `/nortu/` 这一级子路径）
 
 ## 本地开发
 

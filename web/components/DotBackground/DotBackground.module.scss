@@ -1,0 +1,56 @@
+@use "sass:math";
+@use "../../styles/tokens" as t;
+
+/*
+ * 全页点阵底：铺在写死的视口层上，不进文档流、不吃点击。
+ *
+ * 点阵的明暗**不是逐点随机**：点本身是均匀重复的圆点，
+ * 明暗由几层很大的软光斑叠成一张「云」去压（mask）——
+ * 所以亮暗是一小片一小片、平缓过渡的，不会这点亮下一个点就暗。
+ * 光斑的尺寸和位置全部写死、不掺随机数，每次进来分布都一样。
+ */
+
+$dot-pitch: 22px; // 点距：略密于纸面默认，又不至于糊成一片
+$dot-radius: 1px; // 点半径（直径 2px）
+$dot-ink: rgba(19, 19, 19, 0.3);
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  background-image: radial-gradient($dot-ink $dot-radius, transparent $dot-radius);
+  background-size: $dot-pitch $dot-pitch;
+
+  /*
+   * 云分四层：先一层 35% 的底（所有点都压到这一档），
+   * 再叠三团不同大小的软光斑往上加亮；三层的格子尺寸互不相同
+   * （620 / 860 / 1090），叠起来看不出重复的块。
+   * 亮处约 30% 的点墨、暗处约 10%，跨三倍，成片的深浅才看得出来。
+   */
+  $cloud:
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    radial-gradient(
+      ellipse 60% 52% at 34% 40%,
+      rgba(0, 0, 0, 0.65),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 52% 46% at 74% 68%,
+      rgba(0, 0, 0, 0.6),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 46% 56% at 16% 80%,
+      rgba(0, 0, 0, 0.55),
+      transparent 68%
+    );
+
+  -webkit-mask-image: $cloud;
+  mask-image: $cloud;
+  -webkit-mask-size: 100% 100%, 620px 620px, 860px 860px, 1090px 1090px;
+  mask-size: 100% 100%, 620px 620px, 860px 860px, 1090px 1090px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}

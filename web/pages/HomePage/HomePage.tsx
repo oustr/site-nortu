@@ -5,6 +5,7 @@ import {
   RiShareLine,
 } from "@remixicon/react";
 import ContactDialog from "../../components/ContactDialog/ContactDialog.tsx";
+import DotBackground from "../../components/DotBackground/DotBackground.tsx";
 import LinkDialog, {
   type LinkDialogContent,
 } from "../../components/LinkDialog/LinkDialog.tsx";
@@ -264,6 +265,8 @@ const HomePage = () => {
 
   return (
     <div className={styles.page}>
+      {/* 点阵底：固定铺在视口上，内容按 z-index 压在它上面 */}
+      <DotBackground />
       {/* 右上角联系方式：点开弹窗，与页面内容互不干扰 */}
       <button
         type="button"

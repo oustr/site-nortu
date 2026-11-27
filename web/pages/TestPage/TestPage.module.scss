@@ -1,0 +1,74 @@
+@use "../../styles/tokens" as t;
+
+/*
+ * 测试页：只为验证路由，不参与视觉设计。
+ * 沿用首页的纸色底与灰阶 token，保证切过来不突兀。
+ */
+.page {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 72px 40px 112px;
+  background-color: t.$paper;
+  color: t.$ink-1;
+  text-align: center;
+}
+
+/* 正文压在点阵底之上（点阵层是 z-index: 0 的固定层） */
+.title,
+.note,
+.back {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 64px;
+  letter-spacing: 0.02em;
+}
+
+.note {
+  margin: 0;
+  color: t.$ink-3;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* 回首页入口：描边按钮，样式与首页卡片同一套灰阶 */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 18px;
+  border: 1px solid t.$line-strong;
+  border-radius: 10px;
+  background-color: t.$surface;
+  color: t.$ink-2;
+  font-size: 16px;
+  line-height: 24px;
+  text-decoration: none;
+  transition:
+    background-color 200ms,
+    border-color 200ms,
+    color 200ms;
+
+  &:hover {
+    border-color: t.$ink-5;
+    background-color: t.$paper;
+    color: t.$ink-1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$ink-3;
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,52 @@
+@use "./styles/tokens" as t;
+
+/*
+ * 路由切换时的占位：子页面 chunk 还没下载完，先铺一块纸色底，
+ * 避免闪一下白屏。不写任何字号/图标，纯背景。
+ */
+.fallback {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: t.$paper;
+}
+
+/* 未匹配的路由：和测试页同一套版式，只给一句提示 + 回首页入口 */
+.notFound {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 72px 40px 112px;
+  background-color: t.$paper;
+  color: t.$ink-1;
+  text-align: center;
+}
+
+.notFoundTitle {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 44px;
+}
+
+.notFoundNote {
+  margin: 0;
+  color: t.$ink-3;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.notFoundLink {
+  margin-top: 8px;
+  color: t.$ink-2;
+  font-size: 16px;
+  line-height: 24px;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: t.$ink-1;
+  }
+}
